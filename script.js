@@ -12,6 +12,7 @@ function addToDisplay(element) {
         display.textContent = "";
         shouldDelete = false;
     }
+    console.log(element.textContent);
     display.textContent = display.textContent + element.textContent;
 }
 
@@ -23,31 +24,22 @@ function addToDisplayOperator(element) {
 }
 
 function addToDisplayDot(element) {
+    if(display.textContent.indexOf('.') !== -1) return;
     display.textContent = display.textContent + element.target.textContent;
     dot.disabled = true;
 }
-
-
 
 const removeTransition = (element) => {
     element.target.classList.remove("clicked");
 }
 
-//decorations
-
 buttons.forEach(element => {
     element.addEventListener('click', () => {
         element.classList.add("clicked")
-        // console.log(element.textContent)
     }
     )
-
     element.addEventListener('transitionend', removeTransition);
 });
-
-
-
-//operation
 
 var firstNum;
 var lastNum;
@@ -90,8 +82,17 @@ operations.forEach(element => {
             solution = divide(firstNum, lastNum);
             break;             
     }
-    display.textContent = solution;
     firstNum = solution;
+    
+    if(solution.toString().length >= 12) {
+        display.textContent = parseFloat(solution.toFixed(3));
+        
+    } else {
+        display.textContent = solution;
+        
+    }
+    
+    
     lastNum = "";
     currentOperator = e.target.textContent;
     shouldDelete = true;
@@ -103,7 +104,6 @@ const getLastNum = (input) => {
     lastNum = parseFloat(input, 10);
     return lastNum
 }
-
 
 function add (a , b) {
     return a + b;
@@ -141,17 +141,21 @@ equator.addEventListener('click', e => {
             solution = divide(firstNum, lastNum);
             break;             
     }
-    display.textContent = solution;
     shouldDelete = true;
+    if(solution.toString().length >= 12) {
+        display.textContent = parseFloat(solution.toFixed(3));
+        
+    } else {
+        display.textContent = solution;
+        
+    }
     firstNum = "";
     lastNum = "";
     currentOperator = undefined;
     buttons.forEach(button => {
         button.disabled = false;
     })
-    
 })
-
 
 ac.addEventListener('click', ()=> {
     display.textContent = 0;
@@ -160,5 +164,4 @@ ac.addEventListener('click', ()=> {
     buttons.forEach(button => {
         button.disabled = false;
     })
-
 })
