@@ -8,6 +8,10 @@ const dot = document.querySelector("#theDot");
 
 function addToDisplay(element) {
     if (display.textContent == 0) display.textContent = "";
+    if (shouldDelete == true) {
+        display.textContent = "";
+        shouldDelete = false;
+    }
     display.textContent = display.textContent + element.textContent;
 }
 
@@ -49,6 +53,7 @@ var firstNum;
 var lastNum;
 var currentOperator;
 var beforeLastNum;
+var shouldDelete;
 
 dot.addEventListener('click', e => {
     addToDisplayDot(e);
@@ -56,6 +61,7 @@ dot.addEventListener('click', e => {
 
 numerics.forEach(element => {
     element.addEventListener('click', e => {
+        if(display.textContent.length >= 12) return;
         addToDisplay(e.target);
     })
 })
@@ -65,8 +71,7 @@ operations.forEach(element => {
         if (currentOperator == undefined) {
         firstNum = parseFloat(display.textContent, 10);
         currentOperator = e.target.textContent;
-        addToDisplayOperator(e.target);
-        beforeLastNum = display.textContent.length;
+        shouldDelete = true;
         dot.disabled = false;
         } else if(currentOperator == "+" || currentOperator == "-" || currentOperator == "x" || currentOperator == "/") {
             lastNum = getLastNum(display.textContent);
@@ -74,7 +79,6 @@ operations.forEach(element => {
     switch(currentOperator) {
         case "+":
             solution = add(firstNum, lastNum);
-            console.log(lastNum);
             break;
         case "-":
             solution = substract(firstNum, lastNum);
@@ -86,18 +90,17 @@ operations.forEach(element => {
             solution = divide(firstNum, lastNum);
             break;             
     }
-    console.log(e.target);
     display.textContent = solution;
     firstNum = solution;
     lastNum = "";
     currentOperator = e.target.textContent;
-    addToDisplayOperator(e.target);
+    shouldDelete = true;
         }
     })
 })
 
 const getLastNum = (input) => {
-    lastNum = parseFloat(input.slice(beforeLastNum ), 10);
+    lastNum = parseFloat(input, 10);
     return lastNum
 }
 
@@ -139,9 +142,13 @@ equator.addEventListener('click', e => {
             break;             
     }
     display.textContent = solution;
+    shouldDelete = true;
     firstNum = "";
     lastNum = "";
     currentOperator = undefined;
+    buttons.forEach(button => {
+        button.disabled = false;
+    })
     
 })
 
@@ -150,6 +157,8 @@ ac.addEventListener('click', ()=> {
     display.textContent = 0;
     currentOperator = undefined;
     firstNum = "";
-    dot.disabled = false;
+    buttons.forEach(button => {
+        button.disabled = false;
+    })
 
 })
